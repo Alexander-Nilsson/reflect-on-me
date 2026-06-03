@@ -1,0 +1,51 @@
+[project]
+name = "reflect-on-me"
+version = "0.0.4"
+description = "Anki addon to prevent Reflex Grading Syndrome"
+readme = "README.md"
+license = { text = "GPL-3.0-or-later" }
+requires-python = ">=3.13"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-cov>=6.1.1",
+    "ruff>=0.11.0",
+    "pyright>=1.1.409",
+    "anki>=25.9.4",
+    "aqt>=25.9.4",
+]
+
+[tool.ruff]
+line-length = 100
+exclude = [".venv", ".git", "__pycache__", "build"]
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "W", "UP", "I", "N", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "N999"]
+"tests/*" = ["F401", "F841", "N999"]
+"reflectOnMee.py" = ["N999"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+markers = [
+    "integration: marks tests that require a real Anki runtime",
+]
+filterwarnings = []
+addopts = "-ra -q"
+
+[tool.pyright]
+include = ["reflectOnMee.py", "tests"]
+exclude = ["**/__pycache__"]
+typeCheckingMode = "standard"
+reportMissingTypeStubs = "none"
+reportMissingParameterType = "warning"
+reportOptionalCall = "warning"
+reportOptionalMemberAccess = "none"
+reportUnusedVariable = "warning"
+reportUnknownParameterType = "warning"
+reportMissingImports = "none"
