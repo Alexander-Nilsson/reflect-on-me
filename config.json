@@ -1,0 +1,7 @@
+{
+    "affects_filtered_decks": {
+        "type": "boolean",
+        "value": false,
+        "description": "Apply the reflection pause to filtered decks as well"
+    }
+}
