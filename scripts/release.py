@@ -54,7 +54,7 @@ def main() -> None:
     run("git", "tag", f"v{version}")
 
     if "--push" in sys.argv:
-        run("git", "push", "origin", "main", f"+refs/tags/v{version}")
+        run("git", "push", "origin", "master", f"+refs/tags/v{version}")
 
     if github_output := os.environ.get("GITHUB_OUTPUT"):
         with open(github_output, "a") as f:
