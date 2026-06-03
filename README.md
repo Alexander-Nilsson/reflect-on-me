@@ -1,4 +1,4 @@
-# ReflectOnMee
+# Reflect On Mee - Helps Alleviate RGS
 
 Anki addon that prevents **Reflex Grading Syndrome (RGS)** by enforcing a configurable pause before grading cards. When you reveal an answer too quickly (faster than your set limit), the grade buttons are hidden for a configurable pause period — forcing you to reflect before responding.
 

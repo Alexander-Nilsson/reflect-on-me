@@ -73,7 +73,7 @@ def build_addon():
 
     manifest = {
         "package": "ReflectOnMee",
-        "name": "Reflect On Mee",
+        "name": "Reflect On Mee - Helps Alleviate RGS",
         "version": version,
     }
     manifest_path = build_dir / "manifest.json"
