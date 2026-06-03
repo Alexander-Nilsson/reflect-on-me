@@ -32,22 +32,26 @@ DECKOPTIONS_HTML = """
   #reflect-on-me input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
   #reflect-on-me label { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
   #reflect-on-me span { min-width:150px; }
+  #reflect-on-me .hint { font-size:0.85em; color:#888; margin-left:6px; }
 </style>
 <div id="reflect-on-me">
   <label>
-    <span>Minimum think time:</span>
+    <span>Minimum think time (ms):</span>
     <input type="number" id="rgs_min_limit" value="0"
-           title="Answer in under this (ms) → reflex grading → pause. 0 = off.">
+           title="Answer in under this (ms) → pause to force reflection.">
+    <span class="hint">0 = off</span>
   </label>
   <label>
-    <span>Maximum think time:</span>
+    <span>Maximum think time (ms):</span>
     <input type="number" id="rgs_max_limit" value="0"
-           title="Think longer than this (ms) → pause to absorb. 0 = off.">
+           title="Think longer than this (ms) → pause to absorb.">
+    <span class="hint">0 = off</span>
   </label>
   <label>
-    <span>Pause duration:</span>
-    <input type="number" id="rgs_pause" value="5000"
-           title="How long grade buttons stay hidden (ms).">
+    <span>Pause duration (ms):</span>
+    <input type="number" id="rgs_pause" value="2000"
+           title="Blocks grading for the set duration (ms).">
+    <span class="hint">default: 2000</span>
   </label>
 </div>
 """
@@ -62,7 +66,7 @@ function setup(options) {
   store.subscribe((data) => {
     minInput.value = data["rgs_min_limit"] ?? 0;
     maxInput.value = data["rgs_max_limit"] ?? 0;
-    pauseInput.value = data["rgs_pause"] ?? 5000;
+    pauseInput.value = data["rgs_pause"] ?? 2000;
   });
 
   minInput.addEventListener("change", () =>
@@ -72,7 +76,7 @@ function setup(options) {
     store.update((data) => ({ ...data, rgs_max_limit: parseInt(maxInput.value, 10) || 0 }))
   );
   pauseInput.addEventListener("change", () =>
-    store.update((data) => ({ ...data, rgs_pause: parseInt(pauseInput.value, 10) || 5000 }))
+    store.update((data) => ({ ...data, rgs_pause: parseInt(pauseInput.value, 10) || 2000 }))
   );
 }
 $deckOptions.then((options) => {
@@ -101,7 +105,7 @@ def on_show_answer(card):
     max_limit = conf.get("rgs_max_limit", 0)
     if min_limit < 1 and max_limit < 1:
         return
-    delay = conf.get("rgs_pause", 5000)
+    delay = conf.get("rgs_pause", 2000)
     if (min_limit > 0 and time_taken < min_limit) or (max_limit > 0 and time_taken > max_limit):
         eval(delay)
 

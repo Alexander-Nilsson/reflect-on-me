@@ -16,6 +16,8 @@ uv run python build.py all     # build from source
 
 Configure per-deck in **Deck Options → Add-ons** tab:
 
+![Deck options screenshot](assets/deck-options-screenshot.png)
+
 | Setting | Description |
 |---------|-------------|
 | **Minimum think time** | Answer in less than this → you reflex graded → pause forces a slowdown (0 = off) |
