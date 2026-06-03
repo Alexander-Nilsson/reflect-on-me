@@ -22,7 +22,7 @@ window.setTimeout(function(){
   btn[i].disabled=false;
   btn[i].setAttribute('style','');
  }
-},maxTime*1000);
+},maxTime);
 """
 
 DECKOPTIONS_HTML = """
@@ -37,17 +37,17 @@ DECKOPTIONS_HTML = """
   <label>
     <span>Minimum think time:</span>
     <input type="number" id="rgs_min_limit" value="0"
-           title="Answer in less than this → reflex grading detected → pause kicks in. 0 = off.">
+           title="Answer in under this (ms) → reflex grading → pause. 0 = off.">
   </label>
   <label>
     <span>Maximum think time:</span>
     <input type="number" id="rgs_max_limit" value="0"
-           title="Think longer than this → pause gives you time to absorb. 0 = off.">
+           title="Think longer than this (ms) → pause to absorb. 0 = off.">
   </label>
   <label>
     <span>Pause duration:</span>
-    <input type="number" id="rgs_pause" value="5"
-           title="How long grade buttons stay hidden (seconds).">
+    <input type="number" id="rgs_pause" value="5000"
+           title="How long grade buttons stay hidden (ms).">
   </label>
 </div>
 """
@@ -62,7 +62,7 @@ function setup(options) {
   store.subscribe((data) => {
     minInput.value = data["rgs_min_limit"] ?? 0;
     maxInput.value = data["rgs_max_limit"] ?? 0;
-    pauseInput.value = data["rgs_pause"] ?? 5;
+    pauseInput.value = data["rgs_pause"] ?? 5000;
   });
 
   minInput.addEventListener("change", () =>
@@ -72,7 +72,7 @@ function setup(options) {
     store.update((data) => ({ ...data, rgs_max_limit: parseInt(maxInput.value, 10) || 0 }))
   );
   pauseInput.addEventListener("change", () =>
-    store.update((data) => ({ ...data, rgs_pause: parseInt(pauseInput.value, 10) || 5 }))
+    store.update((data) => ({ ...data, rgs_pause: parseInt(pauseInput.value, 10) || 5000 }))
   );
 }
 $deckOptions.then((options) => {
@@ -89,25 +89,20 @@ def keys_off(boo):
 def eval(delay):
     keys_off(True)
     mw.reviewer.bottom.web.eval(BT_JS % delay)
-    QTimer.singleShot(delay * 1000, lambda: keys_off(False))
+    QTimer.singleShot(delay, lambda: keys_off(False))
 
 
 def on_show_answer(card):
     if card.odid and not AFFECTS_FILTERED_DECKS:
         return
     conf = mw.col.decks.config_dict_for_deck_id(card.current_deck_id())
-    time_taken = card.time_taken() // 1000
+    time_taken = card.time_taken()
     min_limit = conf.get("rgs_min_limit", 0)
     max_limit = conf.get("rgs_max_limit", 0)
     if min_limit < 1 and max_limit < 1:
         return
-    delay = conf.get("rgs_pause", 5)
-    trigger = False
-    if min_limit > 0 and time_taken < min_limit:
-        trigger = True
-    elif max_limit > 0 and time_taken > max_limit:
-        trigger = True
-    if trigger:
+    delay = conf.get("rgs_pause", 5000)
+    if (min_limit > 0 and time_taken < min_limit) or (max_limit > 0 and time_taken > max_limit):
         eval(delay)
 
 

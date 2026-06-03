@@ -45,11 +45,11 @@ class TestEval:
             patch.object(mod, "keys_off") as mock_keys_off,
             patch("reflectOnMee.QTimer") as mock_timer,
         ):
-            mod.eval(5)
+            mod.eval(5000)
 
             mock_keys_off.assert_any_call(True)
 
-            js = mod.BT_JS % 5
+            js = mod.BT_JS % 5000
             aqt.mw.reviewer.bottom.web.eval.assert_called_once_with(js)
 
             args, _ = mock_timer.singleShot.call_args
@@ -92,7 +92,7 @@ class TestOnShowAnswer:
             mock_eval.assert_not_called()
 
     def test_triggers_when_under_min_limit(self):
-        mod = self._setup_mw({"rgs_min_limit": 10, "rgs_max_limit": 0, "rgs_pause": 3})
+        mod = self._setup_mw({"rgs_min_limit": 10000, "rgs_max_limit": 0, "rgs_pause": 3000})
 
         card = MagicMock()
         card.odid = 0
@@ -102,10 +102,10 @@ class TestOnShowAnswer:
 
         with patch.object(mod, "eval") as mock_eval:
             mod.on_show_answer(card)
-            mock_eval.assert_called_once_with(3)
+            mock_eval.assert_called_once_with(3000)
 
     def test_triggers_when_over_max_limit(self):
-        mod = self._setup_mw({"rgs_min_limit": 0, "rgs_max_limit": 5, "rgs_pause": 3})
+        mod = self._setup_mw({"rgs_min_limit": 0, "rgs_max_limit": 5000, "rgs_pause": 3000})
 
         card = MagicMock()
         card.odid = 0
@@ -115,10 +115,10 @@ class TestOnShowAnswer:
 
         with patch.object(mod, "eval") as mock_eval:
             mod.on_show_answer(card)
-            mock_eval.assert_called_once_with(3)
+            mock_eval.assert_called_once_with(3000)
 
     def test_skips_when_within_limits(self):
-        mod = self._setup_mw({"rgs_min_limit": 5, "rgs_max_limit": 15, "rgs_pause": 3})
+        mod = self._setup_mw({"rgs_min_limit": 5000, "rgs_max_limit": 15000, "rgs_pause": 3000})
 
         card = MagicMock()
         card.odid = 0
