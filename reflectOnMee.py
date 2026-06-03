@@ -26,36 +26,28 @@ window.setTimeout(function(){
 """
 
 DECKOPTIONS_HTML = """
-<div style="margin-bottom:12px;color:#555;font-size:13px;line-height:1.4">
-  <strong>Too fast?</strong> If you reveal the answer in less than the
-  <em>minimum</em> time, you're likely reflex grading — the pause forces
-  you to slow down.<br>
-  <strong>Too slow?</strong> If you spend longer than the
-  <em>maximum</em> time, the pause gives you a moment to absorb the answer.<br>
-  Set both to 0 to disable.
-</div>
-<div style="margin-bottom:8px">
-  <label style="display:flex;align-items:center;gap:8px">
-    <span style="min-width:150px">Minimum think time:</span>
-    <input type="number" id="rgs_min_limit" min="0" max="120" step="5" value="0"
-           style="width:80px" />
-    <span>secs (0 = off)</span>
+<style>
+  #reflect-on-me input { -moz-appearance:textfield; width:80px; }
+  #reflect-on-me input::-webkit-inner-spin-button,
+  #reflect-on-me input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+  #reflect-on-me label { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  #reflect-on-me span { min-width:150px; }
+</style>
+<div id="reflect-on-me">
+  <label>
+    <span>Minimum think time:</span>
+    <input type="number" id="rgs_min_limit" value="0"
+           title="Answer in less than this → reflex grading detected → pause kicks in. 0 = off.">
   </label>
-</div>
-<div style="margin-bottom:8px">
-  <label style="display:flex;align-items:center;gap:8px">
-    <span style="min-width:150px">Maximum think time:</span>
-    <input type="number" id="rgs_max_limit" min="0" max="300" step="10" value="0"
-           style="width:80px" />
-    <span>secs (0 = off)</span>
+  <label>
+    <span>Maximum think time:</span>
+    <input type="number" id="rgs_max_limit" value="0"
+           title="Think longer than this → pause gives you time to absorb. 0 = off.">
   </label>
-</div>
-<div>
-  <label style="display:flex;align-items:center;gap:8px">
-    <span style="min-width:150px">Pause duration:</span>
-    <input type="number" id="rgs_pause" min="2" max="60" step="5" value="5"
-           style="width:80px" />
-    <span>secs</span>
+  <label>
+    <span>Pause duration:</span>
+    <input type="number" id="rgs_pause" value="5"
+           title="How long grade buttons stay hidden (seconds).">
   </label>
 </div>
 """
