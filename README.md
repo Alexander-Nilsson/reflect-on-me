@@ -14,12 +14,12 @@ uv run python build.py all     # build from source
 
 ## Configuration
 
-Configure per-deck in **Deck Options → Reviews** tab:
+Configure per-deck in **Deck Options → Add-ons** tab:
 
 | Setting | Description |
 |---------|-------------|
-| **RefxGrade Ans Limit** | Time in seconds before the pause triggers (0 = disabled) |
-| **RefxGrade Pause** | Seconds to wait before re-enabling grade buttons |
+| **Speed limit** | Max seconds to answer before the pause kicks in (0 = off) |
+| **Pause duration** | Seconds grade buttons stay hidden while you reflect |
 
 A global option in the addon config (`config.json`) controls whether filtered decks are affected.
 

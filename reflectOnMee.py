@@ -26,17 +26,22 @@ window.setTimeout(function(){
 """
 
 DECKOPTIONS_HTML = """
+<div style="margin-bottom:12px;color:#666;font-size:13px">
+  When you reveal the answer in under the time limit below, grade buttons
+  are hidden for the pause duration — forcing you to reflect before grading.
+  Set the limit to 0 to disable.
+</div>
 <div style="margin-bottom:8px">
   <label style="display:flex;align-items:center;gap:8px">
-    <span>RefxGrade Ans Limit:</span>
+    <span style="min-width:140px">Speed limit:</span>
     <input type="number" id="rgs_limit" min="0" max="120" step="5" value="0"
            style="width:80px" />
-    <span>secs (0 = disabled)</span>
+    <span>secs (0 = off)</span>
   </label>
 </div>
 <div>
   <label style="display:flex;align-items:center;gap:8px">
-    <span>RefxGrade Pause:</span>
+    <span style="min-width:140px">Pause duration:</span>
     <input type="number" id="rgs_pause" min="2" max="60" step="5" value="5"
            style="width:80px" />
     <span>secs</span>
