@@ -79,8 +79,8 @@ class TestOnShowAnswer:
             mod.on_show_answer(card)
             mock_eval.assert_not_called()
 
-    def test_skips_when_limit_is_zero(self):
-        mod = self._setup_mw({"rgs_limit": 0})
+    def test_skips_when_both_limits_zero(self):
+        mod = self._setup_mw({"rgs_min_limit": 0, "rgs_max_limit": 0})
 
         card = MagicMock()
         card.odid = 0
@@ -91,8 +91,21 @@ class TestOnShowAnswer:
             mod.on_show_answer(card)
             mock_eval.assert_not_called()
 
-    def test_triggers_eval_when_over_limit(self):
-        mod = self._setup_mw({"rgs_limit": 5, "rgs_pause": 3})
+    def test_triggers_when_under_min_limit(self):
+        mod = self._setup_mw({"rgs_min_limit": 10, "rgs_max_limit": 0, "rgs_pause": 3})
+
+        card = MagicMock()
+        card.odid = 0
+        card.current_deck_id.return_value = 1
+        card.time_taken.return_value = 3000
+        mod.AFFECTS_FILTERED_DECKS = False
+
+        with patch.object(mod, "eval") as mock_eval:
+            mod.on_show_answer(card)
+            mock_eval.assert_called_once_with(3)
+
+    def test_triggers_when_over_max_limit(self):
+        mod = self._setup_mw({"rgs_min_limit": 0, "rgs_max_limit": 5, "rgs_pause": 3})
 
         card = MagicMock()
         card.odid = 0
@@ -104,19 +117,18 @@ class TestOnShowAnswer:
             mod.on_show_answer(card)
             mock_eval.assert_called_once_with(3)
 
-    def test_triggers_short_eval_for_learning_cards(self):
-        mod = self._setup_mw({"rgs_limit": 10, "rgs_pause": 5})
+    def test_skips_when_within_limits(self):
+        mod = self._setup_mw({"rgs_min_limit": 5, "rgs_max_limit": 15, "rgs_pause": 3})
 
         card = MagicMock()
         card.odid = 0
         card.current_deck_id.return_value = 1
-        card.time_taken.return_value = 3000
-        card.queue = 1
+        card.time_taken.return_value = 10000
         mod.AFFECTS_FILTERED_DECKS = False
 
         with patch.object(mod, "eval") as mock_eval:
             mod.on_show_answer(card)
-            mock_eval.assert_called_once_with(3)
+            mock_eval.assert_not_called()
 
 
 class TestDeckOptionsLoaded:
@@ -138,6 +150,9 @@ class TestDeckOptionsLoaded:
         call_arg = dialog.web.eval.call_args[0][0]
         assert json.dumps(expected_html) in call_arg
         assert "$deckOptions.then" in call_arg
+        assert "rgs_min_limit" in call_arg
+        assert "rgs_max_limit" in call_arg
+        assert "rgs_pause" in call_arg
 
 
 class TestOnWillAnswerCard:

@@ -18,8 +18,9 @@ Configure per-deck in **Deck Options → Add-ons** tab:
 
 | Setting | Description |
 |---------|-------------|
-| **Speed limit** | Max seconds to answer before the pause kicks in (0 = off) |
-| **Pause duration** | Seconds grade buttons stay hidden while you reflect |
+| **Minimum think time** | Answer in less than this → you reflex graded → pause forces a slowdown (0 = off) |
+| **Maximum think time** | Think longer than this → pause gives you a moment to absorb (0 = off) |
+| **Pause duration** | How long grade buttons stay hidden |
 
 A global option in the addon config (`config.json`) controls whether filtered decks are affected.
 

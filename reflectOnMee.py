@@ -26,22 +26,33 @@ window.setTimeout(function(){
 """
 
 DECKOPTIONS_HTML = """
-<div style="margin-bottom:12px;color:#666;font-size:13px">
-  When you reveal the answer in under the time limit below, grade buttons
-  are hidden for the pause duration — forcing you to reflect before grading.
-  Set the limit to 0 to disable.
+<div style="margin-bottom:12px;color:#555;font-size:13px;line-height:1.4">
+  <strong>Too fast?</strong> If you reveal the answer in less than the
+  <em>minimum</em> time, you're likely reflex grading — the pause forces
+  you to slow down.<br>
+  <strong>Too slow?</strong> If you spend longer than the
+  <em>maximum</em> time, the pause gives you a moment to absorb the answer.<br>
+  Set both to 0 to disable.
 </div>
 <div style="margin-bottom:8px">
   <label style="display:flex;align-items:center;gap:8px">
-    <span style="min-width:140px">Speed limit:</span>
-    <input type="number" id="rgs_limit" min="0" max="120" step="5" value="0"
+    <span style="min-width:150px">Minimum think time:</span>
+    <input type="number" id="rgs_min_limit" min="0" max="120" step="5" value="0"
+           style="width:80px" />
+    <span>secs (0 = off)</span>
+  </label>
+</div>
+<div style="margin-bottom:8px">
+  <label style="display:flex;align-items:center;gap:8px">
+    <span style="min-width:150px">Maximum think time:</span>
+    <input type="number" id="rgs_max_limit" min="0" max="300" step="10" value="0"
            style="width:80px" />
     <span>secs (0 = off)</span>
   </label>
 </div>
 <div>
   <label style="display:flex;align-items:center;gap:8px">
-    <span style="min-width:140px">Pause duration:</span>
+    <span style="min-width:150px">Pause duration:</span>
     <input type="number" id="rgs_pause" min="2" max="60" step="5" value="5"
            style="width:80px" />
     <span>secs</span>
@@ -52,16 +63,21 @@ DECKOPTIONS_HTML = """
 DECKOPTIONS_JS = """
 function setup(options) {
   const store = options.auxData();
-  const limitInput = document.getElementById("rgs_limit");
+  const minInput = document.getElementById("rgs_min_limit");
+  const maxInput = document.getElementById("rgs_max_limit");
   const pauseInput = document.getElementById("rgs_pause");
 
   store.subscribe((data) => {
-    limitInput.value = data["rgs_limit"] ?? 0;
+    minInput.value = data["rgs_min_limit"] ?? 0;
+    maxInput.value = data["rgs_max_limit"] ?? 0;
     pauseInput.value = data["rgs_pause"] ?? 5;
   });
 
-  limitInput.addEventListener("change", () =>
-    store.update((data) => ({ ...data, rgs_limit: parseInt(limitInput.value, 10) || 0 }))
+  minInput.addEventListener("change", () =>
+    store.update((data) => ({ ...data, rgs_min_limit: parseInt(minInput.value, 10) || 0 }))
+  );
+  maxInput.addEventListener("change", () =>
+    store.update((data) => ({ ...data, rgs_max_limit: parseInt(maxInput.value, 10) || 0 }))
   );
   pauseInput.addEventListener("change", () =>
     store.update((data) => ({ ...data, rgs_pause: parseInt(pauseInput.value, 10) || 5 }))
@@ -88,14 +104,19 @@ def on_show_answer(card):
     if card.odid and not AFFECTS_FILTERED_DECKS:
         return
     conf = mw.col.decks.config_dict_for_deck_id(card.current_deck_id())
-    limit = conf.get("rgs_limit", 0)
-    if limit < 1:
+    time_taken = card.time_taken() // 1000
+    min_limit = conf.get("rgs_min_limit", 0)
+    max_limit = conf.get("rgs_max_limit", 0)
+    if min_limit < 1 and max_limit < 1:
         return
     delay = conf.get("rgs_pause", 5)
-    if (card.time_taken() // 1000) > limit:
+    trigger = False
+    if min_limit > 0 and time_taken < min_limit:
+        trigger = True
+    elif max_limit > 0 and time_taken > max_limit:
+        trigger = True
+    if trigger:
         eval(delay)
-    elif card.queue == 1:
-        eval(3)
 
 
 def on_will_answer_card(ease_tuple, reviewer, card):
