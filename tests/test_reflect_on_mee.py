@@ -1,6 +1,7 @@
 """Unit tests for ReflectOnMee addon logic."""
 
 import importlib
+import json
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -116,6 +117,27 @@ class TestOnShowAnswer:
         with patch.object(mod, "eval") as mock_eval:
             mod.on_show_answer(card)
             mock_eval.assert_called_once_with(3)
+
+
+class TestDeckOptionsLoaded:
+    """Test the on_deck_options_loaded hook handler."""
+
+    def test_injects_html_and_js(self):
+        import aqt
+
+        aqt.mw = MagicMock()
+
+        mod = _reload_addon()
+        dialog = MagicMock()
+        dialog.web.eval = MagicMock()
+        expected_html = mod.DECKOPTIONS_HTML
+
+        mod.on_deck_options_loaded(dialog)
+
+        dialog.web.eval.assert_called_once()
+        call_arg = dialog.web.eval.call_args[0][0]
+        assert json.dumps(expected_html) in call_arg
+        assert "$deckOptions.then" in call_arg
 
 
 class TestOnWillAnswerCard:

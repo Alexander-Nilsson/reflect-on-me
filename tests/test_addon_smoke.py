@@ -29,9 +29,7 @@ class TestAddonImports:
 
         importlib.reload(reflectOnMee)
 
-        assert reflectOnMee.on_deck_conf_setup is not None
-        assert reflectOnMee.on_load_config is not None
-        assert reflectOnMee.on_save_config is not None
+        assert reflectOnMee.on_deck_options_loaded is not None
         assert reflectOnMee.on_show_answer is not None
         assert reflectOnMee.on_will_answer_card is not None
 
